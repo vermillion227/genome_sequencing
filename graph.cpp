@@ -7,6 +7,10 @@
 
 using namespace std;
 
+namespace graph {
+
+// Edge methods
+
 // Node methods
 
 Node::Node() {}
@@ -15,13 +19,27 @@ Node::Node(const string& data, const long id) : data_(data), id_(id) {}
 
 Node::~Node() {}
 
-string Node::getData() { return data_; }
+string Node::GetData() { return data_; }
 
-void Node::setData(const string& data) { data_ = data; }
+void Node::SetData(const string& data) { data_ = data; }
 
-long Node::getId() { return id_; }
+long Node::GetId() { return id_; }
 
-void Node::setId(const long id) { id_ = id; }
+void Node::SetId(const long id) { id_ = id; }
+
+void Node::IncFanOut() { fan_out++; }
+
+void Node::IncVisitedNum() { visited_num++; }
+
+int Node::GetVisitedNum() { return visited_num; }
+
+int Node::GetFanOut() { return fan_out; }
+
+void Node::InsertEdge(const shared_ptr<Node>& node) {
+    out_edges.push_back(unique_ptr<Edge>( new Edge(this, node) ));
+}  
+
+vetcor<unique_ptr<Edge> > Node::GetEdges() { return out_edges; }
 
 //deBruijnGraph methods
 
@@ -29,19 +47,19 @@ deBruijnGraph::deBruijnGraph() { num_nodes = 0; }
 
 deBruijnGraph::~deBruijnGraph() {}
 
-void deBruijnGraph::AddComponent(const string& key_1, const string& key_2) {
-    if (nodes_.find(key_1) == nodes_.end()) {
-        Node node1(key_1, num_nodes);
-        num_nodes++;
-        nodes_[key_1] = node1;
+void deBruijnGraph::AddComponent(const string& data_1, const string& data_2) {
+    auto node1 = nodes_map.find(data_1);
+    auto node2 = nodes_map.find(data_2);
+
+    if (node1 == nodes_map.end()) {
+        AddNode(data_1);
     }
 
-    if (nodes_.find(key_2) == nodes_.end()) {
-        Node node2(key_2, num_nodes);
-        num_nodes++;
-        nodes_[key_2] = node2;
+    if (node2 == nodes_map.end()) {
+        AddNode(data_2);
     }
 
-    adjacency_list[key_1].push_back(key_2);
+    nodes_[node1]->InsertEdge(nodes_[node2]);
 }
 
+}  // namespace graph

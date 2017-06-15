@@ -4,6 +4,26 @@
 
 using namespace std;
 
+namespace graph {
+
+class Node;
+
+class Edge {
+    public:
+        Edge();
+        Edge(const shared_ptr<Node>& from_node, const shared_ptr<Node>& to_node);
+        ~Edge();
+
+        void SetVisited();
+        bool IsVisited();
+        Node* GetToNode();
+        Node* GetFromNode();
+
+    private:
+        shared_ptr<Node> from_node;
+        shared_ptr<Node> to_node;
+        bool visited_;
+}
 
 /*
  *  Class that defines a node in a graph. The type of the data contained in this
@@ -16,14 +36,26 @@ class Node {
         Node(const string& data, const long id);
         ~Node();
 
-        string    getData();
-        void      setData(const string& data);
-        long      getId();
-        void      setId(const long id);
+        string    GetData();
+        void      SetData(const string& data);
+        long      GetId();
+        void      SetId(const long id);
+        void      IncVisitedNum();
+        void      IncFanOut();
+        void      IncFanIn();
+        int       GetVisitedNum();
+        int       GetFanOut();
+        int       GetFanOut();
+        void      InsertEdge(const shared_ptr<Node>& node);
+        vector<unique_ptr<Edge> > GetEdges();
 
     private:
         string data_;
         long id_;
+        int visited_num;
+        int fan_in;
+        int fan_out;
+        vector<unique_ptr<Edge> > out_edges;
 };
 
 /*
@@ -35,10 +67,17 @@ class deBruijnGraph {
         deBruijnGraph();
         ~deBruijnGraph();
 
-        void AddComponent(const string& key_1, const string& key_2);
+        void AddComponent(const string& data_1, const string& data_2);
+        void BalanceGraph();
+        long GetNumEdges();
 
     private:
-        map<string, Node> nodes_;
-        map<string, vector<string> > adjacency_list;
+        void AddNode(const string& data);
+
+        vector<shared_ptr<Node> > nodes_;
+        map<string, int> nodes_map;
         long num_nodes;
+        long num_edges;
 };
+
+}  // namespace graph
