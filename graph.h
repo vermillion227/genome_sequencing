@@ -42,8 +42,6 @@ class Node {
 
         string    GetData();
         void      SetData(const string& data);
-        long      GetId();
-        void      SetId(const long id);
         void      IncVisitedNum();
         void      IncFanOut();
         void      IncFanIn();
@@ -55,7 +53,6 @@ class Node {
 
     private:
         string data_;
-        long id_;
         int visited_num;
         int fan_in;
         int fan_out;
@@ -80,7 +77,6 @@ class deBruijnGraph {
 
         vector<shared_ptr<Node> > nodes_;
         map<string, shared_ptr<Node> > nodes_map;
-        long num_nodes;
         long num_edges;
 };
 
