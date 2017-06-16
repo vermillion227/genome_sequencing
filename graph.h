@@ -79,7 +79,7 @@ class deBruijnGraph {
         void AddNode(const string& data);
 
         vector<shared_ptr<Node> > nodes_;
-        map<string, int> nodes_map;
+        map<string, shared_ptr<Node> > nodes_map;
         long num_nodes;
         long num_edges;
 };
