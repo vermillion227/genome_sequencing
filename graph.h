@@ -71,11 +71,11 @@ class deBruijnGraph {
         void AddComponent(const string& data_1, const string& data_2);
         void BalanceGraph();
         long GetNumEdges();
+        Node* GetFirstNode();
 
     private:
         void AddNode(const string& data);
 
-        vector<shared_ptr<Node> > nodes_;
         map<string, shared_ptr<Node> > nodes_map;
         long num_edges;
 };
