@@ -8,6 +8,10 @@ namespace graph {
 
 class Node;
 
+/*
+ *  Class that defines an edge of the de Bruijn graph.
+ *
+ * */
 class Edge {
     public:
         Edge();
