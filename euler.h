@@ -2,9 +2,10 @@
 
 using graph::Node;
 using graph::deBruijnGraph;
+using graph::Edge;
 
 namespace euler {
 
-vector<Node> FindEulerianCycle(const deBruijnGraph& graph);
+vector<Edge*> FindEulerianCycle(deBruijnGraph& graph);
 
 }  // namespace euler

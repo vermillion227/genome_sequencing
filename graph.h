@@ -15,7 +15,7 @@ class Node;
 class Edge {
     public:
         Edge();
-        Edge(const shared_ptr<Node>& from_node, const shared_ptr<Node>& to_node);
+        Edge(const shared_ptr<Node> from_node, const shared_ptr<Node>& to_node);
         ~Edge();
 
         void SetVisited();
@@ -24,10 +24,10 @@ class Edge {
         Node* GetFromNode();
 
     private:
-        shared_ptr<Node> from_node;
-        shared_ptr<Node> to_node;
+        shared_ptr<Node> from_node_;
+        shared_ptr<Node> to_node_;
         bool visited_;
-}
+};
 
 /*
  *  Class that defines a node in a graph. The type of the data contained in this
@@ -37,7 +37,7 @@ class Edge {
 class Node {
     public:
         Node();
-        Node(const string& data, const long id);
+        Node(const string& data);
         ~Node();
 
         string    GetData();
@@ -47,16 +47,16 @@ class Node {
         void      IncFanIn();
         int       GetVisitedNum();
         int       GetFanOut();
-        int       GetFanOut();
+        int       GetFanIn();
         void      InsertEdge(const shared_ptr<Node>& node);
-        vector<unique_ptr<Edge> > GetEdges();
+        vector<Edge*> GetEdges();
 
     private:
         string data_;
         int visited_num;
         int fan_in;
         int fan_out;
-        vector<unique_ptr<Edge> > out_edges;
+        vector<Edge*> out_edges;
 };
 
 /*

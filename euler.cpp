@@ -1,4 +1,4 @@
- #include "euler.h"
+#include "euler.h"
 
 namespace euler {
 
@@ -7,8 +7,8 @@ namespace euler {
  *  from the given node. If the node was not found it returns -1.
  * */
 int FindNodeInCycle(const Node* node, const vector<Edge*>& cycle) {
-    for (int i = 0; i < cycle.length(); i++) {
-        if (cycle[i].GetFromNode() == node) {
+    for (int i = 0; i < cycle.size(); i++) {
+        if (cycle[i]->GetFromNode() == node) {
             return i;
         }
     } 
@@ -26,15 +26,15 @@ void WalkCurrentCycle(const Node* node, vector<Edge*>* cycle) {
         return;
     }
 
-    vector<Edge> aux_cycle = *cycle;
-    cycle.clear();
+    vector<Edge*> aux_cycle = *cycle;
+    cycle->clear();
     int found = FindNodeInCycle(node, aux_cycle);
-    for (int i = found; i < aux_cycle.length(); i++) {
-        cycle.push_back(aux_cycle[i]);
+    for (int i = found; i < aux_cycle.size(); i++) {
+        cycle->push_back(aux_cycle[i]);
     }
 
     for (int i = 0; i < found; i++) {
-        cycle.push_back(aux_cycle[i]);
+        cycle->push_back(aux_cycle[i]);
     }
 }
 
@@ -43,11 +43,11 @@ void WalkCurrentCycle(const Node* node, vector<Edge*>* cycle) {
  *  given node. If all edges starting from that node are visited, then it
  *  returns nullptr.
  * */
-Edge* GetNextEdge(const Node* node) {
-    for (auto e : out_edges) {
+Edge* GetNextEdge(Node* node) {
+    for (auto e : node->GetEdges()) {
         if (!e->IsVisited()) {
             e->SetVisited();
-            return e.get();
+            return e;
         }
     }
 
@@ -59,7 +59,7 @@ Edge* GetNextEdge(const Node* node) {
  * it until it gets stuck in a cycle. This function takes care of first walking
  * through the previous found cycle.
  * */
-void CreateCycle(const Node* start_node, vector<Edge*>* curr_cycle) {
+void CreateCycle(Node* start_node, vector<Edge*>* curr_cycle) {
     Node* node = start_node;
     WalkCurrentCycle(node, curr_cycle);
     
@@ -81,16 +81,18 @@ Node* GetNonFinishedNode(const vector<Edge*>& cycle) {
             return e->GetFromNode();
         }
     }
+
+    return nullptr;
 }
 
 /*
  * Function that implements the algorithm for finding an Eulerian cycle in a 
  * deBruijn graph.
  * */
-vector<Edge*> FindEulerianCycle(const deBruijnGraph& graph) {
+vector<Edge*> FindEulerianCycle(deBruijnGraph& graph) {
    vector<Edge*> cycle;
 
-   Node* current_node = graph.getFirstNode();
+   Node* current_node = graph.GetFirstNode();
    CreateCycle(current_node, &cycle);
 
    while(graph.GetNumEdges() != cycle.size()) {
