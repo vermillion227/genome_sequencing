@@ -20,13 +20,21 @@ Edge::Edge(const shared_ptr<Node> from_node, const shared_ptr<Node>& to_node) {
 
 Edge::~Edge() {}
 
-void Edge::SetVisited() { visited_ = true; }
+void Edge::SetVisited() { 
+    visited_ = true;
+}
 
-bool Edge::IsVisited() { return visited_; }
+bool Edge::IsVisited() { 
+    return visited_;
+}
 
-Node* Edge::GetToNode() { return to_node_.get(); }
+Node* Edge::GetToNode() {
+    return to_node_.get();
+}
 
-Node* Edge::GetFromNode() { return from_node_.get(); }
+Node* Edge::GetFromNode() { 
+    return from_node_.get(); 
+}
 
 
 // Node methods
@@ -37,42 +45,80 @@ Node::Node(const string& data) : data_(data) {}
 
 Node::~Node() {}
 
-string Node::GetData() { return data_; }
+string Node::GetData() { 
+    return data_; 
+}
 
-void Node::SetData(const string& data) { data_ = data; }
+void Node::SetData(const string& data) { 
+    data_ = data; 
+}
 
-void Node::IncFanOut() { fan_out++; }
+void Node::IncFanOut() { 
+    fan_out++;
+}
 
-void Node::IncFanIn() { fan_in++; }
+void Node::IncFanIn() { 
+    fan_in++; 
+}
 
-void Node::IncVisitedNum() { visited_num++; }
+void Node::IncVisitedNum() {
+    visited_num++;
+}
 
-int Node::GetVisitedNum() { return visited_num; }
+int Node::GetVisitedNum() { 
+    return visited_num;
+}
 
-int Node::GetFanOut() { return fan_out; }
+int Node::GetFanOut() { 
+    return fan_out;
+}
 
-int Node::GetFanIn() { return fan_in; }
+int Node::GetFanIn() {
+    return fan_in;
+}
 
 void Node::InsertEdge(const shared_ptr<Node>& node) {
     shared_ptr<Node> aux(this);
     out_edges.push_back(new Edge(aux, node));
 }  
 
-vector<Edge*> Node::GetEdges() { return out_edges; }
+vector<Edge*> Node::GetEdges() {
+    return out_edges;
+}
+
 
 //deBruijnGraph methods
 
-deBruijnGraph::deBruijnGraph() { num_edges = 0; }
+deBruijnGraph::deBruijnGraph() { 
+    num_edges = 0;
+}
 
 deBruijnGraph::~deBruijnGraph() {}
 
 void deBruijnGraph::AddComponent(const string& data_1, const string& data_2) {
-    auto n1 = nodes_map.find(data_1);
-    auto n2 = nodes_map.find(data_2);
+
+    if (nodes_map.find(data_1) == nodes_map.end()) {
+        AddNode(data_1);
+    }
+
+    if (nodes_map.find(data_2) == nodes_map.end()) {
+        AddNode(data_2);
+    }
+
+    auto n1 = nodes_map.find(data_1)->second;
+    auto n2 = nodes_map.find(data_2)->second;
+    n1->InsertEdge(n2);
+    num_edges++;
 }
 
 void deBruijnGraph::BalanceGraph() {
 
+}
+
+void deBruijnGraph::AddNode(const string& data) {
+    Node* new_node = new Node(data);
+
+    nodes_map.insert(pair<string, shared_ptr<Node> >(data, shared_ptr<Node>(new_node)));
 }
 
 long deBruijnGraph::GetNumEdges() { return num_edges; }
