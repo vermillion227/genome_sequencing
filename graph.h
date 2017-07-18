@@ -73,11 +73,15 @@ class deBruijnGraph {
         long GetNumEdges();
         Node* GetFirstNode();
 
+        string GetFromExtraEdge();
+        string GetToExtraEdge();
+
     private:
         void AddNode(const string& data);
 
         map<string, shared_ptr<Node> > nodes_map;
         long num_edges;
+        string from_extra_edge, to_extra_edge;
 };
 
 }  // namespace graph

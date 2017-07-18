@@ -1,3 +1,4 @@
+#include <iostream>
 #include <string>
 #include <utility>
 #include <vector>
@@ -41,7 +42,7 @@ Node* Edge::GetFromNode() {
 
 Node::Node() {}
 
-Node::Node(const string& data) : data_(data) {}
+Node::Node(const string& data) : data_(data), fan_in(0), fan_out(0) {}
 
 Node::~Node() {}
 
@@ -80,6 +81,9 @@ int Node::GetFanIn() {
 void Node::InsertEdge(const shared_ptr<Node>& node) {
     shared_ptr<Node> aux(this);
     out_edges.push_back(new Edge(aux, node));
+    IncFanOut();
+    node->IncFanIn();
+    cout << "[InsertEdge] Inserted edge " << GetData() << " -> " << node->GetData() << endl;
 }  
 
 vector<Edge*> Node::GetEdges() {
@@ -112,19 +116,47 @@ void deBruijnGraph::AddComponent(const string& data_1, const string& data_2) {
 }
 
 void deBruijnGraph::BalanceGraph() {
+    cout << "[BalanceGraph] Enter BalanceGraph\n";
+    shared_ptr<Node> aux;
+    for (auto it : nodes_map) {
+        if (it.second->GetFanIn() < it.second->GetFanOut()) {
+            aux = it.second;
+            break;
+        }
+    }
+    for (auto it : nodes_map) {
+        if (it.second->GetFanIn() > it.second->GetFanOut()) {
+            it.second->InsertEdge(aux);
+            from_extra_edge = it.second->GetData();
+            to_extra_edge = aux->GetData();
+        }
+    }
 
+    num_edges++;
+    cout << "[BalanceGraph] GraphBalanced\n";
 }
 
 void deBruijnGraph::AddNode(const string& data) {
     Node* new_node = new Node(data);
 
     nodes_map.insert(pair<string, shared_ptr<Node> >(data, shared_ptr<Node>(new_node)));
+    cout << "[AddNode] Added node " << data << endl;
 }
 
-long deBruijnGraph::GetNumEdges() { return num_edges; }
+long deBruijnGraph::GetNumEdges() { 
+    return num_edges;
+}
 
 Node* deBruijnGraph::GetFirstNode() {
     return nodes_map.begin()->second.get();
 }   
+
+string deBruijnGraph::GetFromExtraEdge() {
+    return from_extra_edge;
+}
+
+string deBruijnGraph::GetToExtraEdge() {
+    return to_extra_edge;
+}
 
 }  // namespace graph

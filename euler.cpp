@@ -1,3 +1,5 @@
+#include <iostream>
+
 #include "euler.h"
 
 namespace euler {
@@ -14,6 +16,8 @@ int FindNodeInCycle(const Node* node, const vector<Edge*>& cycle) {
     } 
 
     return -1;
+
+
 }
 
 /*
@@ -22,6 +26,7 @@ int FindNodeInCycle(const Node* node, const vector<Edge*>& cycle) {
  *  this function 'cycle' will be updated to the new order of edges.
  * */
 void WalkCurrentCycle(const Node* node, vector<Edge*>* cycle) {
+    cout << "[WalkCurrentCycle] Enter.\n";
     if (!cycle->size()) {
         return;
     }
@@ -47,10 +52,13 @@ Edge* GetNextEdge(Node* node) {
     for (auto e : node->GetEdges()) {
         if (!e->IsVisited()) {
             e->SetVisited();
+            cout << "[GetNextEdge] Return edge " << e->GetFromNode()->GetData() << "->"
+                << e->GetToNode()->GetData() << endl;
             return e;
         }
     }
 
+    cout << "[GetNextEdge] Returns nullptr.\n";
     return nullptr;
 }
 
@@ -60,6 +68,7 @@ Edge* GetNextEdge(Node* node) {
  * through the previous found cycle.
  * */
 void CreateCycle(Node* start_node, vector<Edge*>* curr_cycle) {
+    cout << "[CreateCycle] Enter CreateCycle starting from node " << start_node->GetData() << endl; 
     Node* node = start_node;
     WalkCurrentCycle(node, curr_cycle);
     
@@ -85,22 +94,35 @@ Node* GetNonFinishedNode(const vector<Edge*>& cycle) {
     return nullptr;
 }
 
+void RemoveExtraEdge(vector<Edge*>* cycle, deBruijnGraph graph) {
+    for (int i = 0; i < cycle->size(); i++) {
+        if ((*cycle)[i]->GetFromNode()->GetData() == graph.GetFromExtraEdge() &&
+            (*cycle)[i]->GetToNode()->GetData() == graph.GetToExtraEdge()) {
+            cycle->erase(cycle->begin() + i);
+            return;
+        }
+    }
+}
+
 /*
  * Function that implements the algorithm for finding an Eulerian cycle in a 
  * deBruijn graph.
  * */
 vector<Edge*> FindEulerianCycle(deBruijnGraph& graph) {
-   vector<Edge*> cycle;
+    cout << "[FindEulerianCycle] Enter FindEulerianCycle\n";
+    vector<Edge*> cycle;
 
-   Node* current_node = graph.GetFirstNode();
-   CreateCycle(current_node, &cycle);
+    Node* current_node = graph.GetFirstNode();
+    cout << "Current node = " << current_node->GetData() << endl;
+    CreateCycle(current_node, &cycle);
 
-   while(graph.GetNumEdges() != cycle.size()) {
+    while(graph.GetNumEdges() != cycle.size()) {
         current_node = GetNonFinishedNode(cycle);
         CreateCycle(current_node, &cycle);
-   }
-    
-   return cycle;
+    }
+   
+    RemoveExtraEdge(&cycle, graph);
+    return cycle;
 }
 
 }  // namespace euler
